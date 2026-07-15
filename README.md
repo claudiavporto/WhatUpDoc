@@ -28,6 +28,7 @@ WhatUpDoc addresses this gap by combining semantic search, source-grounded gener
 ## Research Questions
 
 | | |
+|--|--|
 | RQ1 | Does chunking strategy affect retrieval precision on legal and medical documents? |
 | RQ2 | How does top-k context size affect LLaMA 3 response accuracy? |
 | RQ3 | Can the pipeline run fully offline, and what are the latency trade-offs? |
