@@ -6,7 +6,7 @@ IE 7374 – Group 03 | Claudia Porto, Christopher Swartz, Sean Costello, Kat Fou
 
 ## Overview
 
-WhatUpDoc is a fully offline Retrieval-Augmented Generation (RAG) application that allows users to securely query sensitive documents without sending any data to external servers. The system is designed for professionals who need the analytical power of generative AI but operate under strict data governance requirements — including HIPAA-regulated medical records, NDA-covered legal contracts, and confidential proprietary documents.
+WhatUpDoc is a fully offline Retrieval-Augmented Generation (RAG) application that allows users to securely query sensitive documents without sending any data to external servers. The system is designed for professionals who need the analytical power of generative AI but operate under strict data governance requirements, including HIPAA-regulated medical records, NDA-covered legal contracts, and confidential proprietary documents.
 
 Unlike commercial tools such as ChatGPT Enterprise or Adobe AI Assistant, WhatUpDoc runs entirely on the user's local machine. Documents are parsed, embedded, and stored locally. Queries are answered by a locally hosted LLM. No data ever leaves the device.
 
@@ -28,7 +28,6 @@ WhatUpDoc addresses this gap by combining semantic search, source-grounded gener
 ## Research Questions
 
 | | |
-|--|--|
 | RQ1 | Does chunking strategy affect retrieval precision on legal and medical documents? |
 | RQ2 | How does top-k context size affect LLaMA 3 response accuracy? |
 | RQ3 | Can the pipeline run fully offline, and what are the latency trade-offs? |
