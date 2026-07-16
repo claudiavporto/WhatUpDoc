@@ -1,0 +1,4 @@
+strategy,n_chunks,mean_chars,min_chars,max_chars,stdev_chars,pct_clean_boundaries
+fixed,8,777.5,364,1000,287.8,37.5
+sentence,5,1093,932,1185,91.8,100.0
+paragraph,5,1047.4,288,1758,640.1,100.0
