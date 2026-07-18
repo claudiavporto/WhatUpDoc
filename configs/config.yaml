@@ -1,0 +1,38 @@
+# WhatUpDoc — central configuration
+# All pipeline components read from this file via src/config.py.
+# Change values here rather than editing code.
+
+ollama:
+  host: "http://localhost:11434"     # local Ollama server; never a remote URL
+  llm_model: "llama3:8b"             # primary generator
+  fallback_llm_model: "mistral:7b"   # used if primary is not pulled
+  embedding_model: "nomic-embed-text" # 768-dim local embedding model
+  request_timeout_s: 120
+
+chunking:
+  strategy: "sentence"               # one of: fixed | sentence | paragraph
+  fixed:
+    chunk_size_chars: 1000
+    overlap_chars: 200
+  sentence:
+    max_chars: 1200                  # pack whole sentences up to this length
+    overlap_sentences: 1
+  paragraph:
+    max_chars: 1800                  # merge short paragraphs up to this length
+
+retrieval:
+  collection_name: "whatupdoc"
+  persist_dir: "data/processed/chroma"
+  top_k: 4                           # chunks passed to the LLM as context
+  distance_metric: "cosine"
+
+generation:
+  prompt_profile: "strict_cited"     # one of: strict_cited | concise
+  temperature: 0.1                   # low temperature -> grounded answers
+  max_tokens: 512
+  context_token_budget: 6000         # usable window for retrieved context
+  chars_per_token_estimate: 4        # heuristic for token budgeting
+
+privacy:
+  enforce_offline: true              # refuse to run if a non-localhost host is configured
+  allowed_hosts: ["localhost", "127.0.0.1"]
