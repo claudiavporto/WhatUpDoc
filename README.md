@@ -2,7 +2,7 @@
 
 **A Privacy-First Local RAG Application**
 
-IE 7374 – Group 03 | Claudia Porto, Christopher Swartz, Sean Costello, Kat Fountain
+IE 7374 – Group 03 | Claudia Porto, Christopher Swartz, Sean Costello
 
 ## Overview
 
