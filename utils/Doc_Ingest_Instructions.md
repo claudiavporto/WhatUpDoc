@@ -3,7 +3,7 @@
 Use the `ingest_document()` function to parse a document and apply the desired chunking strategy.
 
 ```python
-from document_ingestion import ingest_document
+from doc_ingestion import ingest_document
 
 chunks, metadata = ingest_document(
     "docs/example.pdf",
