@@ -1,0 +1,43 @@
+SPRINGFIELD REGIONAL WATER AUTHORITY
+CROSS-CONNECTION CONTROL AND SERVICE LATERAL POLICY (FICTIONAL SAMPLE)
+Policy No. WA-2026-04 | Effective January 1, 2026
+
+SECTION 1 — PURPOSE
+This policy establishes requirements for cross-connection control and
+clarifies ownership and maintenance responsibility for water service
+laterals within the Authority's service area.
+
+SECTION 2 — SERVICE LATERAL OWNERSHIP
+The Authority owns and maintains the water main, the service tap, and the
+lateral from the main to and including the meter and meter box. The
+property owner owns and maintains the service lateral from the outlet
+side of the meter to the structure, including any private valves,
+pressure-reducing devices, and interior plumbing.
+
+SECTION 3 — BACKFLOW PREVENTION
+3.1 All commercial, industrial, and irrigation connections shall be
+equipped with an approved backflow prevention assembly appropriate to
+the degree of hazard, as determined by the Authority's cross-connection
+control program.
+
+3.2 Backflow prevention assemblies shall be tested upon installation,
+after any repair or relocation, and at least once every twelve (12)
+months thereafter by a certified backflow assembly tester. Test reports
+shall be submitted to the Authority within ten (10) business days of
+the test.
+
+3.3 Failure to complete required testing within thirty (30) days of
+written notice constitutes grounds for termination of water service
+until compliance is demonstrated.
+
+SECTION 4 — RESIDENTIAL REQUIREMENTS
+Residential connections with auxiliary water sources (wells, cisterns,
+rainwater systems) or in-ground irrigation shall install, at minimum, a
+dual check valve assembly at the meter. The Authority may require a
+higher level of protection where site conditions warrant.
+
+SECTION 5 — ENFORCEMENT
+The Director of Engineering or designee may enter premises at reasonable
+times to inspect for cross-connections. Violations of this policy are
+subject to service termination under Section 3.3 and civil penalties as
+provided in the Authority's enabling legislation.
