@@ -2,6 +2,8 @@
 """
 validate_corpus.py
 
+Owner: Claudia Porto (feature/performance-testing)
+
 Validates the WhatUpDoc document corpus (medical, legal, policy categories) before
 handoff to the ingestion pipeline. Scans .pdf, .docx, and .txt files. Checks for:
   1. Corrupted / unreadable files

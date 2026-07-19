@@ -2,6 +2,8 @@
 """
 smoke_test_pipeline.py
 
+Owner: Claudia Porto (feature/performance-testing)
+
 Runs the real WhatUpDoc pipeline end to end on one sample file:
 
     src.data_loader.load_document
