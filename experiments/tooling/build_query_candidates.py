@@ -2,6 +2,8 @@
 """
 build_query_candidates.py
 
+Owner: Claudia Porto (feature/performance-testing)
+
 Scans the WhatUpDoc corpus (policy, legal, medical) and auto-generates
 CANDIDATE test queries with known-correct answers, for RQ1 (retrieval
 precision) evaluation across all three categories.

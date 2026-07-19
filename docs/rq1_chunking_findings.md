@@ -1,5 +1,7 @@
 # RQ1 Preliminary Findings: Chunking Strategy Comparison
 
+Owner: Claudia Porto (feature/performance-testing)
+
 ## Status
 
 **Preliminary / structural analysis only.** This document covers chunk *size and structure*

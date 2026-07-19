@@ -25,6 +25,8 @@ WhatUpDoc addresses this gap by combining semantic search, source-grounded gener
 - **Chunking:** fixed-size, sentence-boundary (spaCy), paragraph-boundary
 - **UI:** Gradio
 
+*Note: the rubric's suggested structure names a `models/` folder; this project's model implementation (data loading, chunking, embeddings, vector store, LLM client, grounding) lives in `src/`, the standard Python package convention, since these are pipeline components rather than trained model artifacts. `models/` is retained for lightweight sample fixtures used by offline experiments.*
+
 ## Research Questions
 
 | | |

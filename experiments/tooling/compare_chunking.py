@@ -2,22 +2,24 @@
 """
 compare_chunking.py
 
+Owner: Claudia Porto (feature/performance-testing)
+
 RQ1 support script: runs all three chunking strategies (fixed, sentence, paragraph)
 from Sean's utils/doc_ingestion.py across the validated corpus and reports comparative
 stats, both overall and broken down by domain (medical/legal/policy).
 
 utils/doc_ingestion.py now supports .pdf, .docx, and .txt (as of the fix adding
 parse_txt() and updating SUPPORTED_EXTENSIONS). All three are treated as ingestable
-below. If any other unsupported extension shows up in the corpus later, it will be
-reported as skipped rather than silently ignored or crashing the run.
+below; every file in the corpus is one of these three types.
 
 This does NOT test retrieval precision directly (that requires the embedding +
 vector store + a query set) — it's the first step: understanding how each strategy
 actually splits up the real corpus before you build the retrieval evaluation on top.
 
-Run this script from the repo root (so the utils/ package can be found):
-    python compare_chunking.py --data-dir data/corpus
-    python compare_chunking.py --data-dir data/corpus --strategies fixed sentence
+Run this script from the repo root (it now lives in experiments/, one level below
+the repo root):
+    python experiments/compare_chunking.py --data-dir data/corpus
+    python experiments/compare_chunking.py --data-dir data/corpus --strategies fixed sentence
 """
 
 import argparse
@@ -27,9 +29,13 @@ import statistics
 import sys
 from pathlib import Path
 
-# Make sure the repo root is on sys.path so `utils` resolves as a package,
-# regardless of where this script is actually invoked from.
-sys.path.insert(0, str(Path(__file__).resolve().parent))
+# This script lives in experiments/, one level below the repo root, but
+# utils/doc_ingestion.py needs to be importable as `utils.doc_ingestion` from
+# the repo root's perspective. Python only auto-adds the invoked script's own
+# directory to sys.path, not the current working directory, so without going
+# up TWO levels (past experiments/) this import fails with
+# "ModuleNotFoundError: No module named 'utils'" even when run from the repo root.
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 try:
     from utils.doc_ingestion import ingest_document
@@ -44,41 +50,31 @@ except ImportError as e:
 STRATEGIES = ["fixed", "sentence", "paragraph"]
 # utils/doc_ingestion.py now supports all three of these (post .txt fix).
 INGESTABLE_EXTENSIONS = {".pdf", ".docx", ".txt"}
-# Anything else found in the corpus gets reported as skipped rather than crashing.
-SKIPPED_EXTENSIONS = set()
 
 
-def find_corpus_files(data_dir: Path) -> tuple:
+def find_corpus_files(data_dir: Path) -> dict:
     """
     Group files by domain subfolder (medical/legal/policy), matching validate_corpus.py's
-    approach. Returns (domains, skipped) where domains maps domain -> list of ingestable
-    files, and skipped maps domain -> list of files with unsupported extensions (.txt).
+    approach. Returns domains, mapping domain -> list of ingestable files.
     """
     domains = {}
-    skipped = {}
     subdirs = [d for d in data_dir.iterdir() if d.is_dir()]
 
     def collect(folder: Path):
         all_files = sorted(folder.rglob("*"))
-        ingestable = [f for f in all_files if f.suffix.lower() in INGESTABLE_EXTENSIONS]
-        skip = [f for f in all_files if f.suffix.lower() in SKIPPED_EXTENSIONS]
-        return ingestable, skip
+        return [f for f in all_files if f.suffix.lower() in INGESTABLE_EXTENSIONS]
 
     if subdirs:
         for d in subdirs:
-            ingestable, skip = collect(d)
+            ingestable = collect(d)
             if ingestable:
                 domains[d.name] = ingestable
-            if skip:
-                skipped[d.name] = skip
     else:
-        ingestable, skip = collect(data_dir)
+        ingestable = collect(data_dir)
         if ingestable:
             domains["all"] = ingestable
-        if skip:
-            skipped["all"] = skip
 
-    return domains, skipped
+    return domains
 
 
 def chunk_lengths_words(chunks) -> list:
@@ -123,16 +119,10 @@ def main():
         print(f"ERROR: data directory not found: {data_dir}")
         sys.exit(1)
 
-    domains, skipped = find_corpus_files(data_dir)
+    domains = find_corpus_files(data_dir)
     if not domains:
-        print(f"No .pdf or .docx files found under {data_dir} "
-              f"(utils/doc_ingestion.py doesn't support .txt)")
+        print(f"No .pdf, .docx, or .txt files found under {data_dir}")
         sys.exit(1)
-
-    total_skipped = sum(len(files) for files in skipped.values())
-    if total_skipped:
-        print(f"NOTE: skipping {total_skipped} file(s) with unsupported extensions "
-              f"(see SKIPPED_EXTENSIONS). See breakdown at the end.\n")
 
     # results[strategy][domain] = list of word-count-per-chunk across all files in that domain
     results = {s: {d: [] for d in domains} for s in args.strategies}
@@ -183,15 +173,6 @@ def main():
         print("=" * 78)
         for path, strategy, err in file_errors:
             print(f"  {path} [{strategy}]: {err}")
-
-    if skipped:
-        print("\n" + "=" * 78)
-        print(f"SKIPPED — UNSUPPORTED FILE TYPES ({total_skipped} file(s))")
-        print("=" * 78)
-        for domain, files in skipped.items():
-            print(f"  [{domain}] {len(files)} file(s) skipped: "
-                  f"{sorted(set(f.suffix.lower() for f in files))}")
-        print("\n  These files were NOT included in the chunking comparison above.")
 
     print("\nDone.")
     print("\nNote: this compares chunk SIZE distributions only. To evaluate retrieval")
