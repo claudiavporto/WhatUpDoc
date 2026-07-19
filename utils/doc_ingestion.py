@@ -20,7 +20,7 @@ DATA_DIRECTORY = Path("docs")
 CHUNK_SIZE = 512
 CHUNK_OVERLAP = 64
 
-SUPPORTED_EXTENSIONS = {".pdf", ".docx"}
+SUPPORTED_EXTENSIONS = {".pdf", ".docx", ".txt"}
 
 # %%
 # Initialize spaCy w/ Sentencizer for faster and more efficient retrieval (by sentence vs full doc)
@@ -92,6 +92,45 @@ def parse_docx(docx_path):
     return paragraphs, metadata
 
 # %%
+# Create TXT Parsing function (paragraph-based, same shape as parse_docx)
+def parse_txt(txt_path):
+    # Read the file, falling back to latin-1 if it's not valid UTF-8
+    try:
+        raw_text = Path(txt_path).read_text(encoding="utf-8")
+    except UnicodeDecodeError:
+        raw_text = Path(txt_path).read_text(encoding="latin-1")
+
+    # Some source records store paragraph breaks as a literal two-character
+    # "\n" sequence rather than an actual newline byte. Normalize both to
+    # real newlines before splitting.
+    raw_text = raw_text.replace("\\n", "\n")
+
+    # This dataset separates paragraphs with a SINGLE newline, not a blank
+    # line (\n\n) — splitting on \n\n would collapse the whole note into one
+    # paragraph, which is what was happening before this fix.
+    raw_paragraphs = raw_text.split("\n")
+
+    metadata = {"filename": Path(txt_path).name, "title": "", "author": "", "total_paragraphs": len(raw_paragraphs), "file_type": "txt"}
+
+    print("Document Information")
+    print(f"Total Paragraphs: {len(raw_paragraphs)}")
+    print(f"Metadata: {metadata}\n")
+
+    paragraphs = []
+    for paragraph_num, raw_paragraph in enumerate(raw_paragraphs, start=1):
+
+        text = clean_text(raw_paragraph)
+
+        if not text:
+            continue
+
+        paragraphs.append({"text": text, "metadata": {"filename": metadata["filename"], "paragraph_number": paragraph_num}})
+
+    metadata["total_paragraphs"] = len(paragraphs)
+
+    return paragraphs, metadata
+
+# %%
 # Parse Doc based on Filetype, Return Error if wrong file type used
 def parse_document(file_path):
     extension = Path(file_path).suffix.lower()
@@ -101,6 +140,9 @@ def parse_document(file_path):
 
     elif extension == ".docx":
         return parse_docx(file_path)
+    
+    elif extension == ".txt":
+        return parse_txt(file_path)
 
     else:
         raise ValueError(f"Unsupported file type: {extension}")
@@ -190,15 +232,15 @@ def sentence_chunking(records, chunk_size=CHUNK_SIZE):
 
             # Otherwise save current chunk and start a new one
             else:
+                if current_chunk:
+                    chunk_text = " ".join(current_chunk)
 
-                chunk_text = " ".join(current_chunk)
+                    chunk_metadata = metadata.copy()
+                    chunk_metadata.update({"chunk_index": chunk_index, "chunking_strategy": "sentence", "token_count": current_tokens})
 
-                chunk_metadata = metadata.copy()
-                chunk_metadata.update({"chunk_index": chunk_index,"chunking_strategy": "sentence","token_count": current_tokens})
+                    chunks.append({"text": chunk_text, "metadata": chunk_metadata})
 
-                chunks.append({"text": chunk_text,"metadata": chunk_metadata})
-
-                chunk_index += 1
+                    chunk_index += 1
 
                 current_chunk = [sentence]
                 current_tokens = sentence_tokens
@@ -228,8 +270,8 @@ def paragraph_chunking(records, chunk_size=CHUNK_SIZE):
 
     current_chunk = []
     current_tokens = 0
+    current_chunk_metadata = None  # metadata of the FIRST record in the current chunk
 
-    # Go through each parsed paragraph (or page for PDFs)
     for record in records:
 
         paragraph = record["text"]
@@ -237,33 +279,35 @@ def paragraph_chunking(records, chunk_size=CHUNK_SIZE):
 
         paragraph_tokens = count_tokens(paragraph)
 
-        # Add paragraph if it still fits
         if current_tokens + paragraph_tokens <= chunk_size:
+
+            if not current_chunk:
+                current_chunk_metadata = metadata  # lock in metadata of the chunk's first paragraph
 
             current_chunk.append(paragraph)
             current_tokens += paragraph_tokens
 
-        # Otherwise save current chunk and start a new one
         else:
+            
+            if current_chunk:
+                chunk_text = "\n\n".join(current_chunk)
 
-            chunk_text = "\n\n".join(current_chunk)
+                chunk_metadata = current_chunk_metadata.copy()
+                chunk_metadata.update({"chunk_index": chunk_index, "chunking_strategy": "paragraph", "token_count": current_tokens})
 
-            chunk_metadata = metadata.copy()
-            chunk_metadata.update({"chunk_index": chunk_index, "chunking_strategy": "paragraph", "token_count": current_tokens})
+                chunks.append({"text": chunk_text, "metadata": chunk_metadata})
 
-            chunks.append({"text": chunk_text,"metadata": chunk_metadata})
-
-            chunk_index += 1
+                chunk_index += 1
 
             current_chunk = [paragraph]
             current_tokens = paragraph_tokens
+            current_chunk_metadata = metadata
 
-    # Save the final chunk
     if current_chunk:
 
         chunk_text = "\n\n".join(current_chunk)
 
-        chunk_metadata = metadata.copy()
+        chunk_metadata = current_chunk_metadata.copy()
         chunk_metadata.update({"chunk_index": chunk_index, "chunking_strategy": "paragraph", "token_count": current_tokens})
 
         chunks.append({"text": chunk_text, "metadata": chunk_metadata})
