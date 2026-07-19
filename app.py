@@ -9,10 +9,9 @@ only — the app is never exposed off-machine.
 """
 
 from __future__ import annotations
-
 import gradio as gr
-
 from src.rag_pipeline import RAGPipeline
+from pathlib import Path
 
 pipeline = RAGPipeline()
 
@@ -25,9 +24,9 @@ def handle_upload(files: list) -> str:
     for f in files:
         try:
             n = pipeline.ingest(f.name)
-            messages.append(f"Ingested {f.name.split('/')[-1]} ({n} chunks).")
+            messages.append(f"Ingested {Path(f.name).name} ({n} chunks).")
         except Exception as exc:
-            messages.append(f"Failed on {f.name.split('/')[-1]}: {exc}")
+            messages.append(f"Failed on {Path(f.name).name}: {exc}")
     return "\n".join(messages)
 
 
