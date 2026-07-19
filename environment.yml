@@ -1,14 +1,36 @@
 name: whatupdoc
 channels:
   - conda-forge
+  - defaults
 dependencies:
   - python=3.11
   - pip
   - pyyaml>=6.0
+  - pytest>=8.0
   - pip:
       - pymupdf>=1.24
       - python-docx>=1.1
       - spacy>=3.7
-      - chromadb>=0.5
+      - chromadb>=1.5
       - gradio>=4.0
       - reportlab>=4.0
+
+# Setup, in order:
+#   1. conda env create -f environment.yml
+#   2. conda activate whatupdoc
+#   3. python -m spacy download en_core_web_sm
+#   4. Install Ollama separately (not a Python package): https://ollama.com/download
+#      Then: ollama pull nomic-embed-text
+#            ollama pull llama3:8b
+#
+# NOTE on chromadb: 0.x and 1.x have breaking API changes (client
+# construction, collection methods). This pin (>=1.5) matches the version
+# confirmed working end-to-end in the last full pipeline test -- keep this
+# in sync with requirements.txt's chromadb pin if either changes.
+#
+# NOTE: if your system currently has packages split across multiple Python
+# installs (e.g. chromadb under a Windows Store Python 3.10, everything else
+# under a separate 3.11), creating and activating this env from scratch
+# resolves that. Confirm with `python -c "import sys; print(sys.executable)"`
+# that the interpreter you're running matches this env before troubleshooting
+# any import errors.
