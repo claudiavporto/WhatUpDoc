@@ -1,0 +1,31 @@
+query_id,category,query,expected_source,hit_at_k,rank_of_hit,reciprocal_rank,top_result_source,top_result_distance
+L1,legal,"How does the Gopage content license agreement define a ""Content Item""?",GopageCorp_20140221_10-K_EX-10.1_8432966_EX-10.1_Content%20License%20Agreement.pdf,False,,0.0,AlliedEsportsEntertainmentInc_20190815_8-K_EX-10.19_11788293_EX-10.19_Content%20License%20Agreement.pdf,0.3522
+L2,legal,What territory does the Gopage content license agreement cover?,GopageCorp_20140221_10-K_EX-10.1_8432966_EX-10.1_Content%20License%20Agreement.pdf,False,,0.0,AlliedEsportsEntertainmentInc_20190815_8-K_EX-10.19_11788293_EX-10.19_Content%20License%20Agreement.pdf,0.3157
+L3,legal,"How is ""Control"" defined in the Hertz Group Realty trademark license agreement?",HertzGroupRealtyTrustInc_20190920_S-11A_EX-10.8_11816941_EX-10.8_Trademark%20License%20Agreement.pdf,False,,0.0,AimmuneTherapeuticsInc_20200205_8-K_EX-10.3_11967170_EX-10.3_Development%20Agreement.pdf,0.3264
+L4,legal,What jurisdiction's laws govern the Hertz Group Realty trademark license agreement?,HertzGroupRealtyTrustInc_20190920_S-11A_EX-10.8_11816941_EX-10.8_Trademark%20License%20Agreement.pdf,False,,0.0,AlliedEsportsEntertainmentInc_20190815_8-K_EX-10.19_11788293_EX-10.19_Content%20License%20Agreement.pdf,0.2927
+L5,legal,What jurisdiction's laws govern the Harpoon Therapeutics development and option agreement?,HarpoonTherapeuticsInc_20200312_10-K_EX-10.18_12051356_EX-10.18_Development%20Agreement_Option%20Agreement.pdf,False,,0.0,AimmuneTherapeuticsInc_20200205_8-K_EX-10.3_11967170_EX-10.3_Development%20Agreement.pdf,0.3290
+L6,legal,"How does the LinkPlus affiliate agreement define """"Royalty""""?",LinkPlusCorp_20050802_8-K_EX-10_3240252_EX-10_Affiliate%20Agreement.pdf,False,,0.0,AlliedEsportsEntertainmentInc_20190815_8-K_EX-10.19_11788293_EX-10.19_Content%20License%20Agreement.pdf,0.2610
+L7,legal,What date is defined as the Effective Date in the LinkPlus affiliate agreement?,LinkPlusCorp_20050802_8-K_EX-10_3240252_EX-10_Affiliate%20Agreement.pdf,False,,0.0,AimmuneTherapeuticsInc_20200205_8-K_EX-10.3_11967170_EX-10.3_Development%20Agreement.pdf,0.3544
+L8,legal,"How does the Prudential Bancorp endorsement agreement define """"Base Salary""""?",PrudentialBancorpInc_20170606_8-K_EX-10.4_10474434_EX-10.4_Endorsement%20Agreement.pdf,False,,0.0,AimmuneTherapeuticsInc_20200205_8-K_EX-10.3_11967170_EX-10.3_Development%20Agreement.pdf,0.4405
+L9,legal,What upfront payment will Aimmune make to Xencor under their development agreement?,AimmuneTherapeuticsInc_20200205_8-K_EX-10.3_11967170_EX-10.3_Development%20Agreement.pdf,True,1,1.0,AimmuneTherapeuticsInc_20200205_8-K_EX-10.3_11967170_EX-10.3_Development%20Agreement.pdf,0.1945
+L10,legal,What is the initial one-time license fee in the Gridiron Bionutrients endorsement agreement?,GridironBionutrientsInc_20171206_8-K_EX-10.1_10972555_EX-10.1_Endorsement%20Agreement.pdf,False,,0.0,AlliedEsportsEntertainmentInc_20190815_8-K_EX-10.19_11788293_EX-10.19_Content%20License%20Agreement.pdf,0.3793
+P1,policy,When did the original 2000 Lead and Copper Rule become effective?,00-3.pdf,True,1,1.0,00-3.pdf,0.2415
+P2,policy,"Under the 2000 Lead and Copper Rule, what is the method detection limit (MDL) below which source water lead levels are reported as zero?",00-3.pdf,True,1,1.0,00-3.pdf,0.1961
+P3,policy,"How does the RCRA hazardous secondary materials rule define """"Remanufacturing""""?",2014-30382.pdf,True,1,1.0,2014-30382.pdf,0.1386
+P4,policy,What section of the hazardous waste rule contains the definitions used throughout it?,2014-30382.pdf,True,1,1.0,2014-30382.pdf,0.2083
+P5,policy,"How does the NPDES permit rule define a """"New discharger""""?",2016-11265.pdf,False,,0.0,2014-30382.pdf,0.3618
+P6,policy,What section of the NPDES stormwater rule covers storm water discharges specifically?,2020-21446.pdf,False,,0.0,2012-31205.pdf,0.3197
+P7,policy,"By when must water systems develop an initial lead service line inventory, under the 2021 Lead and Copper Rule Revisions?",2021-12600.pdf,False,,0.0,00-3.pdf,0.1931
+P8,policy,"Under the 2021 Lead and Copper Rule Revisions, what is the lead trigger level for large water systems?",2021-27457.pdf,False,,0.0,00-3.pdf,0.1893
+P9,policy,"Under the 2024 Lead and Copper Rule Improvements, what is the copper action level?",2024-23549.pdf,False,,0.0,00-3.pdf,0.2347
+P10,policy,"Under the PM2.5 NAAQS rule, what does an AQI value greater than 100 indicate?",2024-02637.pdf,False,,0.0,2012-31205.pdf,0.4205
+M1,medical,Which clinical note documents a diagnosis of bipolar affective disorder?,clinical_note_001.docx,True,1,1.0,clinical_note_001.docx,0.4497
+M2,medical,Which clinical note documents a simple fracture of the 9th right rib?,clinical_note_002.docx,True,1,1.0,clinical_note_002.docx,0.3958
+M3,medical,What dose of Lamotrigine was prescribed in the note documenting Stevens-Johnson Syndrome?,clinical_note_029.docx,False,,0.0,ArtaraTherapeuticsInc_20200110_8-K_EX-10.5_11943350_EX-10.5_License%20Agreement.pdf,0.4298
+M4,medical,Which clinical note documents a diagnosis of Stevens-Johnson Syndrome?,clinical_note_029.docx,False,,0.0,2014-30382.pdf,0.4439
+M5,medical,What was the ejection fraction reported in clinical_note_055?,clinical_note_055.docx,False,,0.0,2012-31205.pdf,0.4059
+M6,medical,What cholesterol level was reported on the lipid profile in clinical_note_066?,clinical_note_066.docx,False,,0.0,ArtaraTherapeuticsInc_20200110_8-K_EX-10.5_11943350_EX-10.5_License%20Agreement.pdf,0.4458
+M7,medical,What dose of Plavix was prescribed in clinical_note_087?,clinical_note_087.docx,False,,0.0,00-3.pdf,0.4022
+M8,medical,Which clinical note documents a diagnosis of calcific myonecrosis?,clinical_note_txt_003.txt,False,,0.0,2014-30382.pdf,0.4298
+M9,medical,Which clinical note documents SLE diagnosed after a spontaneous miscarriage in the second trimester?,clinical_note_txt_025.txt,False,,0.0,2012-31205.pdf,0.4251
+M10,medical,Which clinical note documents a diagnosis of anti-NMDAR encephalitis?,clinical_note_txt_074.txt,False,,0.0,2012-31205.pdf,0.3944

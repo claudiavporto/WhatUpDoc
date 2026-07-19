@@ -1,0 +1,13 @@
+strategy,category,n_queries,hit_at_k,mrr
+fixed,ALL,30,0.233,0.217
+fixed,legal,10,0.1,0.1
+fixed,policy,10,0.4,0.4
+fixed,medical,10,0.2,0.15
+sentence,ALL,30,0.233,0.211
+sentence,legal,10,0.1,0.1
+sentence,policy,10,0.4,0.4
+sentence,medical,10,0.2,0.133
+paragraph,ALL,30,0.233,0.233
+paragraph,legal,10,0.1,0.1
+paragraph,policy,10,0.4,0.4
+paragraph,medical,10,0.2,0.2
