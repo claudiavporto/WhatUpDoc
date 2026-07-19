@@ -37,7 +37,7 @@ flowchart LR
 | `src/rag_pipeline.py` | End-to-end orchestration | shared |
 | `src/model_runner.py` | Single-command demo | shared |
 | `app.py` | Gradio UI (localhost only) | shared |
-| `experiments/` | Preliminary + RQ experiments | Claudia / Kat |
+| `experiments/` | Preliminary + RQ experiments | Claudia |
 | `data/make_samples.py` | Synthetic test corpus (no real PII) | Claudia |
 
 ## Design decisions

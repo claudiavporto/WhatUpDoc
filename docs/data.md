@@ -67,15 +67,24 @@ Files are stored in `data/corpus/policy/`.
 ```
 data/
 ├── corpus/
-│   ├── medical/        # Synthetic clinical notes (DOCX + TXT)
-│   ├── legal/           # CUAD contract subset (PDF)
-│   └── policy/          # Public domain regulatory documents (PDF)
-├── raw/                 # Original unprocessed files (gitignored)
-├── processed/           # Chunked outputs after ingestion (gitignored)
-├── fetch_medical.py     # Pulls and dedupes synthetic medical notes from Hugging Face
-├── validate_corpus.py   # Corpus validation: corruption, extractability, duplicates, page counts
-├── ingest.py            # Ingestion pipeline
-└── chunking.py          # Chunking strategy implementations
+│   ├── medical/        # Synthetic clinical notes (100 DOCX + 100 TXT)
+│   ├── legal/           # CUAD contract subset (49 PDF)
+│   └── policy/          # Public domain regulatory documents (37 PDF)
+├── eval/
+│   ├── query_candidates.csv    # Auto-generated RQ1 candidates (pre-review)
+│   └── final_query_set.csv     # Curated 30-query RQ1 evaluation set
+├── raw/                 # Small sample fixtures for fast/offline experiments
+│   ├── sample_lease_agreement.pdf
+│   ├── sample_medical_record.docx
+│   └── sample_utility_policy.txt
+├── processed/            # ChromaDB persistent storage (gitignored, regenerated on each run)
+├── fetch_medical.py       # Pulls and dedupes synthetic medical notes from Hugging Face
+└── make_samples.py        # Generates the data/raw/ sample fixtures used by experiments/
+
+Document parsing, chunking, embedding, and vector storage live in src/
+(src/data_loader.py, src/chunking.py, src/embeddings.py, src/vector_store.py),
+not under data/ — see docs/architecture.md for the full pipeline. Corpus
+validation (validate_corpus.py) lives in experiments/, not data/.
 ```
 
 ## Validation
@@ -83,36 +92,45 @@ data/
 Before ingestion, run the validation script to confirm the corpus is free of corrupted files, scanned/non-extractable PDFs, and exact duplicates:
 
 ```bash
-python validate_corpus.py --data-dir data/corpus
+python experiments/validate_corpus.py --data-dir data/corpus
 ```
 
 This reports, per category and in total: file counts, page counts (actual for PDF, estimated from word count for DOCX/TXT), corrupted files, likely-scanned or empty files, and duplicate sets detected via content hash. Re-run this any time new documents are added to the corpus.
 
 ## Data Loading and Exploration
 
-To load and inspect the corpus before ingestion:
+There is currently no standalone data-exploration script (`data/explore.py` was
+planned but not built as of this milestone). To inspect the corpus, use
+`src/data_loader.py`'s `load_document()` directly, e.g.:
 
-```bash
-python data/explore.py --input data/corpus/
+```python
+from src.data_loader import load_document
+
+pages = load_document("data/corpus/policy/00-3.pdf")
+print(f"{len(pages)} section(s), {sum(len(p.text) for p in pages)} total chars")
 ```
 
-This script prints a summary of all documents in the corpus including file name, format, estimated page count, and word count.
+or run `experiments/tooling/smoke_test_pipeline.py` against any single corpus
+file for a full parse → chunk → embed → store → query summary.
 
 ## Ingestion
 
-To ingest the full corpus using the default sentence-boundary chunking strategy:
+There is currently no standalone `data/ingest.py` CLI (this was planned but not
+built as of this milestone). Ingestion happens through the real pipeline
+modules directly:
 
-```bash
-python data/ingest.py --input data/corpus/ --strategy sentence
+```python
+from src.data_loader import load_document
+from src.chunking import chunk_pages
+
+pages = load_document("data/corpus/policy/00-3.pdf")
+chunks = chunk_pages(pages, "sentence")  # or "fixed" / "paragraph"
 ```
 
-To run ingestion across all three strategies for RQ1 comparison:
-
-```bash
-python data/ingest.py --input data/corpus/ --strategy fixed
-python data/ingest.py --input data/corpus/ --strategy sentence
-python data/ingest.py --input data/corpus/ --strategy paragraph
-```
+For ingesting the full corpus across all three strategies for RQ1 comparison,
+see `experiments/04_precision_recall_eval.py`, which builds a complete,
+fresh ChromaDB collection per strategy from every file in `data/corpus/` and
+is the actual reproducible entry point for this milestone's RQ1 results.
 
 ## Preprocessing Notes
 
