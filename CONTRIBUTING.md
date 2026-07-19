@@ -73,7 +73,6 @@ fix stuff
 | Member | Branch(es) |
 |--------|------------|
 | Sean Costello | `feature/ingestion-pipeline` |
-| Kat Fountain | `feature/evaluation-framework` |
 | Claudia Porto | `feature/dataset-curation`, `feature/performance-testing` |
 | Christopher Swartz | `feature/llm-infrastructure` |
 
