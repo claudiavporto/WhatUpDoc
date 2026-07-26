@@ -10,13 +10,20 @@ spacy>=3.7
 # after install: python -m spacy download en_core_web_sm
 
 # Vector store
-chromadb>=0.5
+# NOTE: chromadb 0.x and 1.x have breaking API changes (client construction,
+# collection methods). Confirmed working against 1.5.9 as of the last
+# end-to-end pipeline test -- pinning the floor here to avoid a future
+# `pip install` silently landing on an incompatible 0.x release.
+chromadb>=1.5
 
 # Config
 pyyaml>=6.0
 
 # UI
 gradio>=4.0
+
+# Testing
+pytest>=8.0             # tests/
 
 # Sample data generation (dev only)
 reportlab>=4.0
