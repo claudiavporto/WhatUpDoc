@@ -52,6 +52,12 @@ REFUSAL_MARKER = "I can't find that in the provided documents."
 
 # Profile 1 — default. Optimized for verifiability: every sentence in the
 # answer must be traceable to a bracketed citation the user can check.
+#
+# Milestone 4 revision: rule 2 now includes an explicit correct/incorrect
+# example pair. The Milestone 3 live run showed the model echoing the
+# excerpt-header phrasing ("[source: file.pdf, page 1]") or citing by
+# excerpt number ("[Excerpt 1]") instead of the instructed bare form —
+# the rule stated the format but never showed the model what NOT to do.
 STRICT_CITED_SYSTEM_PROMPT = """\
 You are WhatUpDoc, a document analysis assistant that answers questions \
 using ONLY the context excerpts provided below. You never use outside \
@@ -60,7 +66,11 @@ knowledge, and you never guess.
 Rules:
 1. Base every statement strictly on the CONTEXT section.
 2. After each claim, cite its origin in brackets: [source, page N]. \
-Use the exact source name and page number shown in the excerpt header.
+Use the exact source name and page number shown in the excerpt header, \
+with no other words inside the brackets. \
+CORRECT: [lease_agreement.pdf, page 2] \
+INCORRECT: [source: lease_agreement.pdf, page 2] \
+INCORRECT: [Excerpt 1]
 3. If the context does not contain the information needed to answer, \
 reply exactly: "I can't find that in the provided documents." (verbatim, \
 nothing else). Do not speculate or fill gaps with general knowledge.
@@ -75,8 +85,10 @@ or advice beyond what the documents state.
 # Profile 2 — shorter answers for quick lookups; same grounding rules.
 CONCISE_SYSTEM_PROMPT = """\
 You answer questions using ONLY the context excerpts below. Answer in \
-1-3 sentences, cite as [source, page N], and if the answer is not in \
-the context reply exactly: "I can't find that in the provided documents."
+1-3 sentences, cite as [source, page N] (e.g. [lease_agreement.pdf, \
+page 2] — never [source: ...] or [Excerpt 1]), and if the answer is \
+not in the context reply exactly: "I can't find that in the provided \
+documents."
 """
 
 PROMPT_PROFILES = {
@@ -143,6 +155,7 @@ class OllamaLLM:
         self.profile = g["prompt_profile"]
         self.context_token_budget = g.get("context_token_budget", 6000)
         self.chars_per_token = g.get("chars_per_token_estimate", 4)
+        self.last_model_used: str | None = None  # set after each generation
 
         if cfg["privacy"]["enforce_offline"]:
             assert_local_host(self.host, cfg["privacy"]["allowed_hosts"])
@@ -173,9 +186,17 @@ class OllamaLLM:
     # -- public API ---------------------------------------------------------
 
     def _generate_with_fallback(self, system: str, prompt: str) -> str:
-        """Generate, falling back to the secondary model on HTTP 404."""
+        """Generate, falling back to the secondary model on HTTP 404.
+
+        Sets self.last_model_used so callers (and experiment scripts) can
+        record which model actually produced the answer. Milestone 3's
+        ablation was unknowingly run against the fallback model; recording
+        provenance per answer makes that impossible to miss again.
+        """
         try:
-            return self._generate(self.model, system, prompt)
+            text = self._generate(self.model, system, prompt)
+            self.last_model_used = self.model
+            return text
         except urllib.error.HTTPError as exc:
             if exc.code == 404 and self.fallback_model:
                 logger.warning(
@@ -183,7 +204,9 @@ class OllamaLLM:
                     "Pull the primary with `ollama pull %s`.",
                     self.model, self.fallback_model, self.model,
                 )
-                return self._generate(self.fallback_model, system, prompt)
+                text = self._generate(self.fallback_model, system, prompt)
+                self.last_model_used = self.fallback_model
+                return text
             raise
         except OSError as exc:
             raise RuntimeError(
