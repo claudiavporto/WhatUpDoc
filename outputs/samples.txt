@@ -1,0 +1,148 @@
+WhatUpDoc sample outputs — 2026-07-26 23:39
+Model: llama3:8b | Chunking: sentence | top_k: 4
+data/raw: 5 chunk(s) | data/corpus/{legal,medical,policy}: 942 chunk(s)
+========================================================================
+
+Q: What is the monthly rent and when is it due?
+A: The monthly rent is $1,850.00, and it is due on the first (1st) day of each month. [lease_agreement.pdf, page 2]
+Grounding: grounding: 0% of citations supported | 1 FABRICATED
+Retrieved sources:
+  - sample_lease_agreement.pdf p.1 (distance 0.3956)
+  - sample_lease_agreement.pdf p.1 (distance 0.4074)
+  - AimmuneTherapeuticsInc_20200205_8-K_EX-10.3_11967170_EX-10.3_Development%20Agreement.pdf p.5 (distance 0.4643)
+  - AimmuneTherapeuticsInc_20200205_8-K_EX-10.3_11967170_EX-10.3_Development%20Agreement.pdf p.5 (distance 0.4652)
+
+Q: What happens if the tenant pays rent late?
+A: According to Excerpt 3, if payments are received after the fifth day of the month, they incur a late fee equal to five percent (5%) of the monthly rent ($92.50). [sample_lease_agreement.pdf, page 2]
+
+Additionally, according to Excerpt 3, returned payments incur an additional $50.00 fee. [sample_lease_agreement.pdf, page 2]
+Grounding: grounding: 0% of citations supported | 2 FABRICATED
+Retrieved sources:
+  - sample_lease_agreement.pdf p.1 (distance 0.3916)
+  - AimmuneTherapeuticsInc_20200205_8-K_EX-10.3_11967170_EX-10.3_Development%20Agreement.pdf p.27 (distance 0.4894)
+  - sample_lease_agreement.pdf p.1 (distance 0.4979)
+  - AimmuneTherapeuticsInc_20200205_8-K_EX-10.3_11967170_EX-10.3_Development%20Agreement.pdf p.42 (distance 0.5087)
+
+Q: What medications is the patient currently taking?
+A: The patient is currently taking:
+
+* Lisinopril 20 mg once daily [Excerpt 1, page 1]
+* Metformin 1000 mg twice daily [Excerpt 1, page 1]
+* Atorvastatin 40 mg nightly [Excerpt 1, page 1]
+* Aspirin 81 mg once daily [Excerpt 1, page 1]
+
+Note: These medications are mentioned in the patient's medical record (Excerpt 1) and do not appear in any other excerpts.
+Grounding: grounding: 100% of citations supported | 4 nonstandard format
+Retrieved sources:
+  - sample_medical_record.docx p.1 (distance 0.3497)
+  - clinical_note_029.docx p.1 (distance 0.3753)
+  - AimmuneTherapeuticsInc_20200205_8-K_EX-10.3_11967170_EX-10.3_Development%20Agreement.pdf p.8 (distance 0.4093)
+  - clinical_note_029.docx p.1 (distance 0.4093)
+
+Q: Does the patient have any allergies?
+A: The patient does not have any known food allergies. [sample_medical_record.docx, page 1]
+
+However, there is a conflict between Excerpt 2 and the rest of the provided documents. Excerpt 2 states that the patient has no known food allergies, while Excerpts 1 and 3 describe AIMab7195 as a treatment for patients with food allergies.
+Grounding: grounding: 100% of citations supported
+Retrieved sources:
+  - AimmuneTherapeuticsInc_20200205_8-K_EX-10.3_11967170_EX-10.3_Development%20Agreement.pdf p.60 (distance 0.3274)
+  - sample_medical_record.docx p.1 (distance 0.3561)
+  - AimmuneTherapeuticsInc_20200205_8-K_EX-10.3_11967170_EX-10.3_Development%20Agreement.pdf p.62 (distance 0.3611)
+  - AimmuneTherapeuticsInc_20200205_8-K_EX-10.3_11967170_EX-10.3_Development%20Agreement.pdf p.62 (distance 0.3895)
+
+Q: How often must backflow prevention assemblies be tested?
+A: According to Excerpt 1, backflow prevention assemblies shall be tested upon installation, after any repair or relocation, and at least once every twelve (12) months thereafter by a certified backflow assembly tester. [sample_utility_policy.txt, page 1]
+
+In Excerpt 2, it is stated that backflow prevention assemblies shall be tested upon installation, after any repair or relocation, and at least once every twelve (12) months thereafter by a certified backflow assembly tester. [sample_utility_policy.txt, page 1]
+
+There are no relevant statements in Excerpts 3 and 4 regarding the testing frequency of backflow prevention assemblies.
+
+Therefore, the answer is: at least once every twelve (12) months thereafter by a certified backflow assembly tester.
+Grounding: grounding: 100% of citations supported
+Retrieved sources:
+  - sample_utility_policy.txt p.1 (distance 0.216)
+  - sample_utility_policy.txt p.1 (distance 0.3606)
+  - 00-3.pdf p.44 (distance 0.3999)
+  - 00-3.pdf p.10 (distance 0.4036)
+
+Q: Who owns the service lateral?
+A: The property owner owns and maintains the service lateral from the outlet side of the meter to the structure, including any private valves, pressure-reducing devices, and interior plumbing. [sample_utility_policy.txt, page 1]
+
+Additionally, according to Excerpt 3, in cases where the system does not own the entire lead service line, the system shall notify the owner of the line that the system will replace the portion of the service line that it owns and shall offer to replace the owner's portion of the line. [00-3.pdf, page 56]
+
+However, Excerpt 4 suggests that some commenters felt that defining control as ownership would be more appropriate, implying that the water system is only responsible for the portion of the service line they own. [00-3.pdf, page 14]
+Grounding: grounding: 100% of citations supported
+Retrieved sources:
+  - sample_utility_policy.txt p.1 (distance 0.3704)
+  - 00-3.pdf p.56 (distance 0.3975)
+  - 00-3.pdf p.56 (distance 0.4227)
+  - 00-3.pdf p.14 (distance 0.4235)
+
+Q: What is the upfront cash payment Aimmune must pay Xencor under the license agreement?
+A: The upfront cash payment Aimmune must pay Xencor under the license agreement is five million Dollars ($5,000,000). [AimmuneTherapeuticsInc_20200205_8-K_EX-10.3_11967170_EX-10.3_Development%20Agreement.pdf, page 23]
+Grounding: grounding: 100% of citations supported
+Retrieved sources:
+  - AimmuneTherapeuticsInc_20200205_8-K_EX-10.3_11967170_EX-10.3_Development%20Agreement.pdf p.23 (distance 0.227)
+  - AimmuneTherapeuticsInc_20200205_8-K_EX-10.3_11967170_EX-10.3_Development%20Agreement.pdf p.26 (distance 0.2561)
+  - AimmuneTherapeuticsInc_20200205_8-K_EX-10.3_11967170_EX-10.3_Development%20Agreement.pdf p.26 (distance 0.266)
+  - AimmuneTherapeuticsInc_20200205_8-K_EX-10.3_11967170_EX-10.3_Development%20Agreement.pdf p.16 (distance 0.2689)
+
+Q: How many days does the Breaching Party have to cure a payment default before the agreement can be terminated?
+A: According to Excerpt 2, the Breaching Party has thirty (30) days in the event of non-payment to remedy such default. [AimmuneTherapeuticsInc_20200205_8-K_EX-10.3_11967170_EX-10.3_Development%20Agreement.pdf, page 42]
+
+In the case of a breach or default other than non-payment, the Breaching Party has sixty (60) days to remedy such default before the agreement can be terminated. [AimmuneTherapeuticsInc_20200205_8-K_EX-10.3_11967170_EX-10.3_Development%20Agreement.pdf, page 42]
+Grounding: grounding: 100% of citations supported
+Retrieved sources:
+  - AimmuneTherapeuticsInc_20200205_8-K_EX-10.3_11967170_EX-10.3_Development%20Agreement.pdf p.42 (distance 0.1504)
+  - AimmuneTherapeuticsInc_20200205_8-K_EX-10.3_11967170_EX-10.3_Development%20Agreement.pdf p.42 (distance 0.2395)
+  - AimmuneTherapeuticsInc_20200205_8-K_EX-10.3_11967170_EX-10.3_Development%20Agreement.pdf p.40 (distance 0.3088)
+  - AimmuneTherapeuticsInc_20200205_8-K_EX-10.3_11967170_EX-10.3_Development%20Agreement.pdf p.42 (distance 0.3291)
+
+Q: What dose of tetrabenazine was the patient started on for tardive dystonia?
+A: The patient was started on tablet tetrabenazine built up to 75 mg per day in divided doses. [clinical_note_001.docx, page 1]
+Grounding: grounding: 100% of citations supported
+Retrieved sources:
+  - clinical_note_001.docx p.1 (distance 0.2974)
+  - clinical_note_001.docx p.1 (distance 0.2996)
+  - clinical_note_001.docx p.1 (distance 0.3113)
+  - clinical_note_001.docx p.1 (distance 0.3347)
+
+Q: What was the patient's vitamin D level and what treatment was prescribed?
+A: The patient's vitamin D level was 8 ng/mL (normal: >30 ng/mL) [clinical_note_005.docx, page 1]. The treatment prescribed for this condition was oral vitamin D2 50,000 IU/week supplement [clinical_note_005.docx, page 1].
+Grounding: grounding: 100% of citations supported
+Retrieved sources:
+  - clinical_note_005.docx p.1 (distance 0.2853)
+  - clinical_note_006.docx p.1 (distance 0.301)
+  - clinical_note_033.docx p.1 (distance 0.3184)
+  - sample_medical_record.docx p.1 (distance 0.3428)
+
+Q: When does the Lead and Copper Rule Minor Revisions final rule take effect?
+A: The Lead and Copper Rule Minor Revisions final rule takes effect on April 11, 2000. [FRL–6515–6, page 1]
+Grounding: grounding: 0% of citations supported | 1 FABRICATED
+Retrieved sources:
+  - 00-3.pdf p.1 (distance 0.2293)
+  - 00-3.pdf p.60 (distance 0.2631)
+  - 00-3.pdf p.43 (distance 0.2666)
+  - 00-3.pdf p.49 (distance 0.267)
+
+Q: By what date must states adopt the LCRMR to maintain primacy?
+A: States must adopt the LCRMR by January 14, 2002; however, under certain circumstances States may receive an extension of up to two years. [00-3.pdf, page 2]
+
+Additionally, it is mentioned that if a State wishes to obtain interim primacy for this rule, beginning on the date that the State submits its complete and final application for primacy for this rule to EPA, or the effective date of its revised regulations, whichever is later. [Excerpt 2, source: 00-3.pdf, page 2]
+
+Note that there are two possible dates mentioned: January 14, 2002, and the date when a State submits its complete and final application for primacy for this rule to EPA, or the effective date of its revised regulations.
+Grounding: grounding: 100% of citations supported
+Retrieved sources:
+  - 00-3.pdf p.2 (distance 0.1487)
+  - 00-3.pdf p.2 (distance 0.236)
+  - 00-3.pdf p.2 (distance 0.2407)
+  - 00-3.pdf p.1 (distance 0.2416)
+
+Q: What is the CEO's salary?
+A: I can't find that in the provided documents.
+Grounding: grounding: refusal (no answer claimed)
+Retrieved sources:
+  - AimmuneTherapeuticsInc_20200205_8-K_EX-10.3_11967170_EX-10.3_Development%20Agreement.pdf p.51 (distance 0.4834)
+  - 00-3.pdf p.47 (distance 0.4995)
+  - AimmuneTherapeuticsInc_20200205_8-K_EX-10.3_11967170_EX-10.3_Development%20Agreement.pdf p.24 (distance 0.5138)
+  - AimmuneTherapeuticsInc_20200205_8-K_EX-10.3_11967170_EX-10.3_Development%20Agreement.pdf p.5 (distance 0.5168)
