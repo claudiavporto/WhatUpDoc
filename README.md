@@ -165,34 +165,41 @@ See Setup step 4 above for the command. To summarize what it produces:
 
 ## Preliminary Results
 
-<!-- TODO: replace this section with 2–3 representative Q&A pairs copied
-     directly from an actual run of outputs/samples.txt, e.g.:
+Full output: `outputs/samples.txt` (run 2026-07-26, `llama3:8b`, sentence chunking, `top_k=4`, 947 chunks ingested: 5 from `data/raw` + 942 sampled from `data/corpus/{legal,medical,policy}`).
 
-Q: What is the monthly rent and when is it due?
-A: Rent is $1,850/month, due on the 1st [sample_lease_agreement.pdf, page 1].
-   [grounding: 100% of citations supported]
+Representative pairs:
+
+```
+Q: What is the upfront cash payment Aimmune must pay Xencor under the license agreement?
+A: The upfront cash payment Aimmune must pay Xencor under the license agreement is
+   five million Dollars ($5,000,000).
+   [AimmuneTherapeuticsInc_20200205_8-K_EX-10.3_11967170_EX-10.3_Development%20Agreement.pdf, page 23]
+   grounding: 100% of citations supported
+
+Q: What dose of tetrabenazine was the patient started on for tardive dystonia?
+A: The patient was started on tablet tetrabenazine built up to 75 mg per day in
+   divided doses. [clinical_note_001.docx, page 1]
+   grounding: 100% of citations supported
 
 Q: What is the CEO's salary?
 A: I can't find that in the provided documents.
-   [grounding: refusal (no answer claimed)]
+   grounding: refusal (no answer claimed)
+```
 
-Then summarize across the full run, e.g.:
-"Across N chunks ingested from data/raw and the legal, medical, and
-policy corpora under data/corpus, grounded answers to in-corpus
-questions consistently cite real retrieved sources (X/13 questions
-scored 100% grounding), and the deliberately unanswerable question
-correctly triggers the refusal path rather than a fabricated answer." -->
+Across all 13 questions, 10 scored 100% grounding with content independently verifiable against the source documents (e.g. the $5,000,000 Xencor upfront payment, the 75 mg/day tetrabenazine dose, the January 14, 2002 LCRMR state-primacy deadline). The remaining 3 all had *correct content* but were correctly flagged as fabricated because the cited source didn't match what was actually retrieved: a wrong filename, a wrong page number, and a document's internal docket identifier (`FRL–6515–6`) substituted for its actual ingested filename (`00-3.pdf`) — see Known Issues. The deliberately unanswerable question ("What is the CEO's salary?") correctly triggered the refusal path rather than a fabricated answer.
 
-*(To be filled in after running `python src/model_runner.py` — see `outputs/samples.txt` for the full run and `docs/` for the RQ1–RQ3 experiment results.)*
+Two questions also surfaced cross-domain retrieval bleed: the medical "allergies" question pulled 3 of its 4 retrieved chunks from the unrelated legal agreement (a food-allergy drug license), and the fictional-policy "service lateral" question pulled from the real EPA rule (which also discusses service line ownership). Both still cited real, correctly-matched (source, page) pairs, so they scored 100% grounding, but the retrieval itself favored the wrong domain more than expected — see Known Issues.
 
 ## Known Issues & Limitations
 
 - **Citation format sensitivity (resolved).** An earlier live run scored 0.0 grounding on both prompt profiles. Investigation showed the model was citing correctly-retrieved sources in nonstandard formats the parser didn't recognize as equivalent to the instructed `[source, page N]` form — e.g. echoing the excerpt-header phrasing (`[source: file.pdf, page 3]`) or citing by excerpt position (`[Excerpt 2]`) instead of by name. This conflated *format* mismatches with genuine *fabrications*. `src/grounding.py`'s `resolve_citations()` now resolves these nonstandard-but-valid formats and reports them separately (see `GroundingReport.nonstandard` / `format_compliance`), while the system prompt (`src/llm.py`) was updated with an explicit correct/incorrect example pair to reduce how often the model produces them in the first place.
+  - A further variant surfaced in a full `data/raw` + `data/corpus` run: on the LCRMR effective-date question, the model cited `FRL–6515–6` — the EPA rule's own internal docket number, printed in the document's header — in place of its actual ingested filename (`00-3.pdf`). This was correctly flagged as fabricated, since the checker matches against ingested filenames, not identifiers found inside a document's text. Two other questions in the same run were flagged for a plainer version of the same underlying issue: one cited a slightly wrong filename (`lease_agreement.pdf` instead of the ingested `sample_lease_agreement.pdf`), and another cited a page number that doesn't exist for that source (the file was ingested as a single section/page). All three had correct answer *content* — only the citation itself was wrong.
 - **Fabricated citations to un-ingested files are not always caught.** In one run against an earlier, `data/corpus`-only version of `model_runner.py`, the model produced fluent, specific-sounding answers (a rent figure, a named patient's medications, a testing interval) that matched what would be in `data/raw`'s sample files almost exactly — but those files had not actually been ingested in that run. The grounding checker scored several of these "100% of citations supported" despite the cited source never being loaded into the vector store. Restoring `data/raw/` ingestion in `model_runner.py` addresses the immediate case (the cited files are now actually ingested), but the underlying gap — the grounding checker not verifying that a cited source file was part of the current run's ingested set — has not been fixed and should be treated as a known limitation of `src/grounding.py`, not just a data-loading fix.
+- **Cross-domain retrieval bleed.** With `data/raw` and `data/corpus` sharing the same ChromaDB collection, a query can retrieve top-k chunks predominantly from an unrelated domain when there's keyword/topic overlap. Observed cases: a medical "allergies" question retrieved mostly from the Aimmune legal agreement (a food-allergy drug license), and a fictional utility-policy "service lateral" question retrieved mostly from the real EPA lead-service-line rule. Both answers still cited real, correctly-matched sources and scored 100% grounding, but retrieval favored the wrong domain more than intended. Not currently mitigated — e.g. no per-domain collection partitioning or metadata filtering at query time.
 - **Token budget is approximate.** `src/grounding.py`'s `estimate_tokens()` uses a chars-per-token heuristic (~4) rather than the actual LLaMA/Mistral SentencePiece tokenizer, since we don't ship it. This intentionally over-estimates to avoid silent context truncation, at the cost of sometimes packing slightly fewer chunks than the true budget would allow.
 - **DOCX pagination is approximate.** DOCX has no fixed page concept, so `src/data_loader.py` groups paragraphs into ~15-paragraph sections and cites those as "pages." Citations for DOCX sources are therefore section-accurate, not page-accurate in the PDF sense.
 - **Re-ingestion re-embeds everything.** `RAGPipeline.ingest()` upserts by deterministic `chunk_id`, so re-running `model_runner.py` won't duplicate data, but it also has no "skip if already ingested" check — every run re-embeds its chunks from scratch through Ollama, regardless of prior runs.
-- **The demo run samples `data/corpus`, not all of it — but ingests `data/raw` in full.** `src/model_runner.py` caps `data/corpus` ingestion at `MAX_CHUNKS_PER_DOMAIN` (150 chunks) per domain to keep the demo fast, while `data/raw`'s three small fixtures are always ingested completely (see Setup step 4). Preliminary Results below therefore reflect retrieval/grounding against `data/raw` in full plus a sample of `data/corpus`, not the complete legal/medical/policy corpora — full-corpus precision/recall is measured separately by `experiments/04_precision_recall_eval.py` and reported in `docs/rq1_metrics_definition.md`.
+- **The demo run samples `data/corpus`, not all of it — but ingests `data/raw` in full.** `src/model_runner.py` caps `data/corpus` ingestion at `MAX_CHUNKS_PER_DOMAIN` (150 chunks) per domain to keep the demo fast, while `data/raw`'s three small fixtures are always ingested completely (see Setup step 4). Preliminary Results above therefore reflect retrieval/grounding against `data/raw` in full plus a sample of `data/corpus`, not the complete legal/medical/policy corpora — full-corpus precision/recall is measured separately by `experiments/04_precision_recall_eval.py` and reported in `docs/rq1_metrics_definition.md`.
 - **Demo question count exceeds the Milestone 4 guideline.** The spec calls for "5–10 samples"; the current demo runs 13 (see Setup step 4 for the breakdown and trimming instructions).
 
 ## Testing
