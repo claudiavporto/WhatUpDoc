@@ -11,4 +11,4 @@ ollama pull nomic-embed-text   # embedding model (~270 MB)
 ```
 
 Selection rationale and benchmarking against alternatives:
-see `docs/methods_research.md` §3.
+see `docs/research.md` §3.
