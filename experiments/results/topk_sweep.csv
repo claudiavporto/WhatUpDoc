@@ -1,0 +1,5 @@
+profile,top_k,model_used,refusal_accuracy,citation_rate,mean_grounding_score,mean_format_compliance,mean_latency_s
+strict_cited,1,llama3:8b,1.0,0.67,0.75,1.0,30.8
+strict_cited,2,llama3:8b,1.0,1.0,0.83,0.67,32.29
+strict_cited,4,llama3:8b,1.0,1.0,0.83,0.83,52.63
+strict_cited,6,llama3:8b,0.67,1.0,0.67,0.58,62.55
